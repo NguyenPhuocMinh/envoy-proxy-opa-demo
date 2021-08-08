@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  front-envoy:
+    image: front-envoy:v1
+    container_name: front-envoy
+    build:
+      context: .
+      dockerfile: Dockerfile-frontenvoy
+    environment:
+      - FRONT_ENVOY_YAML
+    networks:
+      - envoymesh
+    ports:
+      - "8000:8000"
+
+  user-service:
+    image: user-service:v1
+    container_name: user-service
+    build:
+      context: ./services
+      dockerfile: user-service/Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - envoymesh
+
+  product-service:
+    image: product-service:v1
+    container_name: product-service
+    build:
+      context: ./services
+      dockerfile: product-service/Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - envoymesh
+
+  opa-service:
+    image: openpolicyagent/opa:0.25.1-istio
+    container_name: opa-service
+    volumes:
+      - ./config/opa-polices/policy.rego:/etc/policy.rego
+    command:
+      - run
+      - --log-level=debug
+      - --server
+      - --log-format=json-pretty
+      - --set=plugins.envoy_ext_authz_grpc.addr=:9002
+      - --set=decision_logs.console=true
+      - /etc/policy.rego
+    ports:
+      - "9002:9002"
+    networks:
+      - envoymesh
+
+networks:
+  envoymesh: {}
