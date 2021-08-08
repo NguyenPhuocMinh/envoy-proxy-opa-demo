@@ -5,13 +5,15 @@ services:
     image: front-envoy:v1
     container_name: front-envoy
     build:
-      context: .
-      dockerfile: Dockerfile-frontenvoy
+      context: ./envoy
+      dockerfile: Dockerfile
     environment:
       - FRONT_ENVOY_YAML
+      - DEBUG_LOG
     networks:
       - envoymesh
     ports:
+      - "9901:9901"
       - "8000:8000"
 
   user-service:

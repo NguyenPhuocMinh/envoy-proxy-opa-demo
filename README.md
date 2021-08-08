@@ -4,24 +4,27 @@
 
 ```sh
 .
-├── Dockerfile-frontenvoy
 ├── README.md
 ├── config
-│   ├── envoy-v3.yaml
 │   └── opa-polices
-│       └── policy.rego
+│── envoy
 ├── docker-compose.yml
-├── run_envoy.sh
 ├── services
 │   ├── product-service   
 │   └── user-service
-│       
 └── users.json
 ```
 
+### Run build with docker-compose
 ```sh
   - run docker-compose up -d --build
 ```
+
+### Run down with docker-compose
+```sh
+  - run docker-compose down
+```
+
 ### Check with token
 
 - [Check token with jwt.io](https://jwt.io/)
