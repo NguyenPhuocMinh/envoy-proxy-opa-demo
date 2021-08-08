@@ -24,7 +24,7 @@
 ```
 ### Check with token
 
-- [Check token with jwt](https://jwt.io/)
+- [Check token with jwt.io](https://jwt.io/)
 
 ```js
   - export GUEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiZ3Vlc3QiLCJzdWIiOiJZV3hwWTJVPSIsIm5iZiI6MTUxNDg1MTEzOSwiZXhwIjoxNjQxMDgxNTM5fQ.VUsqwMR46q74tYu8DlzqfmcN9GXrPe5NtWsd0nf7N_o"
@@ -56,4 +56,12 @@
 	    "firstname": "Hello",
       "lastname": "Word"
     }'
+```
+
+#### Check input opa file
+
+- [Check file OPA](https://play.openpolicyagent.org/)
+
+```sh
+  - docker logs opa-service
 ```
