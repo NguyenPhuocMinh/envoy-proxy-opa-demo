@@ -1,5 +1,24 @@
 ## Intergrate Envoy proxy with OPA call backend service
 
+### Structure
+
+```sh
+.
+├── Dockerfile-frontenvoy
+├── README.md
+├── config
+│   ├── envoy-v3.yaml
+│   └── opa-polices
+│       └── policy.rego
+├── docker-compose.yml
+├── run_envoy.sh
+├── services
+│   ├── product-service   
+│   └── user-service
+│       
+└── users.json
+```
+
 ```sh
   - run docker-compose up -d --build
 ```
