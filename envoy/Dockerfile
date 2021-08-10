@@ -1,4 +1,4 @@
-FROM envoyproxy/envoy-dev:latest
+FROM envoyproxy/envoy-dev:b54919c7476f3d9c1d60a2bbab8421f456826315
 
 COPY envoy-v3.yaml /etc/envoy/envoy-v3.yaml
 COPY ./run_envoy.sh /run_envoy.sh

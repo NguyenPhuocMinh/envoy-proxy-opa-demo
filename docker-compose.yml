@@ -1,6 +1,23 @@
 version: "3.8"
 
 services:
+  front-web:
+    image: front-web:v1
+    container_name: front-web
+    build:
+      context: frontend
+    depends_on:
+      - front-envoy
+      - user-service
+      - product-service
+    volumes:
+      - ./frontend:/usr/src/app:rw
+      - /usr/src/app/node_modules
+    networks:
+      - envoymesh
+    ports:
+      - "4000:4000"
+
   front-envoy:
     image: front-envoy:v1
     container_name: front-envoy
@@ -20,7 +37,7 @@ services:
     image: user-service:v1
     container_name: user-service
     build:
-      context: ./services
+      context: ./backend
       dockerfile: user-service/Dockerfile
     ports:
       - "8081:8081"
@@ -31,7 +48,7 @@ services:
     image: product-service:v1
     container_name: product-service
     build:
-      context: ./services
+      context: ./backend
       dockerfile: product-service/Dockerfile
     ports:
       - "8082:8082"
