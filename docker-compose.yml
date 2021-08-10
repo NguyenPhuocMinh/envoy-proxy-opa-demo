@@ -1,22 +1,22 @@
 version: "3.8"
 
 services:
-  front-web:
-    image: front-web:v1
-    container_name: front-web
-    build:
-      context: frontend
-    depends_on:
-      - front-envoy
-      - user-service
-      - product-service
-    volumes:
-      - ./frontend:/usr/src/app:rw
-      - /usr/src/app/node_modules
-    networks:
-      - envoymesh
-    ports:
-      - "4000:4000"
+  # front-web:
+  #   image: front-web:v1
+  #   container_name: front-web
+  #   build:
+  #     context: frontend
+  #   depends_on:
+  #     - front-envoy
+  #     - user-service
+  #     - product-service
+  #   volumes:
+  #     - ./frontend:/usr/src/app:rw
+  #     - /usr/src/app/node_modules
+  #   networks:
+  #     - envoymesh
+  #   ports:
+  #     - "3000:3000"
 
   front-envoy:
     image: front-envoy:v1

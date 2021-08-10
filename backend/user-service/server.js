@@ -13,7 +13,7 @@ const PORT = 8081;
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(morgan('dev'))
-app.use(cors("*"))
+// app.use(cors("*"))
 
 app.get('/user', (req, res) => {
   console.log("🚀 ~ file: server.js ~ line 19 ~ app.get ~ req", req.headers)
