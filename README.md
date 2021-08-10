@@ -5,13 +5,16 @@
 ```sh
 .
 ├── README.md
+├── backend
+├── frontend
 ├── config
 │   └── opa-polices
-│── envoy
+│       └── policy.rego
 ├── docker-compose.yml
-├── services
-│   ├── product-service   
-│   └── user-service
+├── envoy
+│   ├── Dockerfile
+│   ├── envoy-v3.yaml
+│   └── run_envoy.sh
 └── users.json
 ```
 
