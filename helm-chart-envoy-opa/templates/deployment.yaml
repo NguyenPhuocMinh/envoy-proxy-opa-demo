@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "envoy-opa.fullname" . }}
+  labels:
+    {{- include "envoy-opa.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "envoy-opa.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "envoy-opa.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "envoy-opa.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: {{ .Values.initContainers.name }}
+        image: "{{ .Values.initContainers.image }}:{{ .Values.initContainers.tag }}"
+        args: ["-p", "9999", "-u", "1111"]
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+      containers:
+      - name: {{ .Values.containers.app.name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.containers.app.image }}:{{ .Values.containers.app.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: http
+            containerPort: {{ .Values.containers.app.port }}
+            protocol: TCP
+      - name: {{ .Values.containers.envoy.name }}
+        image: "{{ .Values.containers.envoy.image }}:{{ .Values.containers.envoy.tag }}"
+        volumeMounts:
+        - readOnly: true
+          mountPath: /config
+          name: {{ .Release.Name }}-configmap
+        args:
+        - "envoy"
+        - "--config-path"
+        - "/config/envoy.yaml"
+        env:
+        - name: ENVOY_UID
+          value: "1111"
+      - name: {{ .Values.containers.opa.name }}
+        image: "{{ .Values.containers.opa.image }}:{{ .Values.containers.opa.tag }}"
+        volumeMounts:
+        - readOnly: true
+          mountPath: /policy
+          name: {{ .Release.Name }}-secret
+        args:
+        - "run"
+        - "--server"
+        - "--addr=localhost:8181"
+        - "--diagnostic-addr=0.0.0.0:8282"
+        - "--set=plugins.envoy_ext_auth_grpc.addr=0.0.0.0:9191"
+        - "--set=plugins.envoy_ext_authz_grpc.path=envoy/authz/allow"
+        - "--set=decision_logs.console=true"
+        - "--ignore=.*"
+        - "/policy/policy.rego"
+        livenessProbe:
+          httpGet:
+            path: /health?plugins
+            scheme: HTTP
+            port: 8282
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health?plugins
+            scheme: HTTP
+            port: 8282
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: {{ .Release.Name }}-configmap
+        configMap:
+          name: {{ .Release.Name }}-configmap
+      - name: {{ .Release.Name }}-secret
+        secret:
+          secretName: {{ .Release.Name }}-secret
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

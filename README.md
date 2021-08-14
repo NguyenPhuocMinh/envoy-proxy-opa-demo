@@ -28,6 +28,34 @@
   - run docker-compose down
 ```
 
+### Run with k8s
+```sh
+  - minikube start
+  - alias k = "kubectl"
+  - k apply -f k8s/configmap.yaml
+  - k apply -f k8s/secret.yaml
+  - k apply -f k8s/deployment.yaml
+  - k apply -f k8s/service.yaml
+  - expose service external_ip minikube tunnel
+  => check k get configmap
+  => check k get secret
+  => check k get pods
+  => check k get describe pod name_pod
+```
+
+### Run with helm chart
+```sh
+  - minikube start
+  - alias k = "kubectl"
+  - helm install RELEASE_NAME helm-chart-envoy-opa
+  => check helm valid: helm template helm-chart-envoy-opa
+  => check helm list
+  => check k get all
+  => check k get configmap
+  => check k get secret
+  => check k get pods
+  - uninstall helm => helm uninstall RELEASE_NAME
+```
 ### Check with token
 
 - [Check token with jwt.io](https://jwt.io/)

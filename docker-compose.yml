@@ -56,7 +56,7 @@ services:
       - envoymesh
 
   opa-service:
-    image: openpolicyagent/opa:0.25.1-istio
+    image: openpolicyagent/opa:latest-envoy
     container_name: opa-service
     volumes:
       - ./config/opa-polices/policy.rego:/etc/policy.rego
@@ -65,11 +65,12 @@ services:
       - --log-level=debug
       - --server
       - --log-format=json-pretty
+      - --addr=:8181
       - --set=plugins.envoy_ext_authz_grpc.addr=:9002
       - --set=decision_logs.console=true
       - /etc/policy.rego
     ports:
-      - "9002:9002"
+      - "8181:8181"
     networks:
       - envoymesh
 
